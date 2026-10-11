@@ -14,13 +14,29 @@ public:
             std::cout << "ArrayList is full." << std::endl;
             return;
         }
-
         for (int i = size_; i > 0; --i) {
             data_[i] = data_[i - 1];
         }
-
         data_[0] = value;
         ++size_;
+
+
+    }
+    void addAnywhere(int position, T* value) override {
+        if (position < 0 || position > size_) {
+            std::cout << "ArrayList position out of bounds." << std::endl;
+            return;
+        }
+        if (size_ >= CAPACITY) {
+            std::cout << "ArrayList is full." << std::endl;
+            return;
+        }
+        for (int i = size_; i > position; --i) {
+            data_[i] = data_[i - 1];
+        }
+        data_[position] = value;
+        ++size_;
+
     }
 
     void deleteFront() override {
