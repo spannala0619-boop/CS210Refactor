@@ -17,23 +17,44 @@ public:
         ++size_;
     }
     void addAnywhere(int position, T* value) override {
-        if (position == 0 || position > size_) {
+        if (position < 0 || position > size_) {
             std::cout << "Position out of bounds" << std::endl;
             return;
         }
-        if (position == 1) {
+        if (position == 0) {
             addFront(value);
             return;
         }
         Node<T>* current = head_;
-        for (int i = 0; i < position - 1; ++i) {
+        for (int i = 1; i < position; ++i) {
+            current = current->next;
+        }
+        Node<T>* fresh = new Node<T>(value);
+        fresh->next = current->next;
+        current->next = fresh;
+        ++size_;
+    }
+    void deleteAnywhere(int position) override {
+        if (position < 0 || position >=  size_) {
+            std::cout << "Position out of bounds" << std::endl;
+            return;
+        }
+        if (position == 0) {
+            deleteFront();
+            return;
+    }
+        Node<T>* current = head_;
+
+        for (int i = 1; i < position; ++i) {
             current = current->next;
         }
         Node<T>* doomed = current->next;
         current->next = doomed->next;
+
         delete doomed->data;
+
         delete doomed;
-        ++size_;
+        --size_;
     }
 
     void deleteFront() override {

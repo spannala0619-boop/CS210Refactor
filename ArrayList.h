@@ -55,6 +55,19 @@ public:
         --size_;
     }
 
+    void deleteAnywhere(int position) override {
+        if (position < 0 || position > size_) {
+            std::cout << "ArrayList position out of bounds." << std::endl;
+            return;
+        }
+        delete data_[position];
+        for (int i = 0; i < size_ - 1; ++i) {
+            data_[i] = data_[i + 1];
+        }
+        data_[size_ - 1] = nullptr;
+        --size_;
+    }
+
     bool search(T* value) const override {
         for (int i = 0; i < size_; ++i) {
             if (*data_[i] == *value) {
