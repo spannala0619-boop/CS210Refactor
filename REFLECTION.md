@@ -1,21 +1,30 @@
 # Reflection
+                - copy pasting cause answered these on a google doc first
 
- 1. In LinkedList::deleteFront(), why does it take two separate delete calls instead of one? Name exactly what each one frees, and name the two new calls back in the program responsible for putting them on the heap in the first place.
+1. Why does concat only need to work between two lists of the same representation? What would you have to do differently, or what would go wrong, if you tried to make it work between a LinkedList and an ArrayList?
 
-Answer: The first delete lets go of the data stored inside the node, in this case it could be int or player. The second delete lets go of the node object itself. The data is put into heap by calls like new int(10) or new player(), and the node is put on heap by new Node<T>(value) which is inside addFront method.
+Answer: All these lists have their own way of storing data. A LinkedList list stores data in a node format, while the ArrayList list stores data in an array format; therefore, one list cannot access the data stored in the other list. For my code, dynamic_cast verifies that the other list has the same type as this list.
 
-2. ArrayList never had a destructor before today. Explain, in your own words, why switching from T data[CAPACITY] to T* data_[CAPACITY] is what made a destructor necessary, and what would happen if you forgot to write one. Would you get a compiler error? Why or why not?
+2. Walk through reverse() on your linked list: name the three pointers you need alive at once, and explain why losing track of any one of them mid-loop corrupts the list.
 
-Answer: When the arraay had stored actual T values, the objects had automatically been cleaned up when the arraay was out of scope. The destructor has to delete these objects manually because since we changed it to an array of pointers, each element would point to something new. If destructor was not there, program would compile but it would lead to a memory leak.
+Answer: My three pointers are previous, current, and next. The current pointer refers to the node I want to modify, previous refers to the location to which its link will be assigned, and next holds the remaining part of the list before the modification. If I lost the next pointer, I would also lose the ability to access the remaining part of the list.
 
- 3. search() and addFront() both take a T*, but they treat that pointer completely differently. Explain the difference in terms of ownership: which one is allowed to delete what you handed it, and which one is never allowed to?
+3. addAnywhere and deleteAnywhere both need a bounds check. What’s the valid range for position in each, and what does your implementation do if a caller passes a position outside it?
 
-Answer: addFront() has ownership because the list stores it and deletes it later. It is why destructors and delete functions free the data. Search only looks at value and does not take ownership
+Answer: In addAnywhere, the possible indices are from 0 to size_, since the insertion is done at the end of the list. In deleteAnywhere, the possible indices are from 0 to size_ - 1, since there should be a value at that index. If the index is not valid, the method simply prints an out-of-bounds message and returns.
 
-4. You swapped LinkedList<T> for ArrayList<T> inside makeList() and reran main.cpp without changing a single line there. What two mechanisms, by name, made that possible?
+4. In LinkedList::concat, why did you need to walk to the end of the list first, when addFront and deleteFront never needed to? What would change about concat’s performance if LinkedList still tracked a tail_ pointer, and what would you have to keep updated elsewhere if you added one back?
 
-Answer: Inheritence allowed both lists to use through common list type.
+Answer: Since addFront and deleteFront deal only with the first node, they may access head_ directly. However, the concat method needs to add the other list behind the last node in this list, so my implementation goes through the list until the end is found. If my class had a tail_ member pointing to the tail node, then concat would run in constant time, but then I'd have to update tail_ in addFront, deleteFront, concat, reverse, and when the list is empty.
 
-5. Pick one keyword from the Key Terms glossary that you either had to add today or would not have thought to add on your own. Describe, in your own words and without copying the guide’s wording, the smallest example you can think of where leaving it out would cause a real problem.
+5. Pick either addAnywhere or deleteAnywhere in ArrayList and explain, in your own words, what has to shift and in which direction, and why shifting in the wrong direction would overwrite data you still need.
 
-Answer: I chose const. Search() is marked with const as search would not change list. If I were to leave out const, it would not compile as the function would not match the base class.
+Answer: In my ArrayList::addAnywhere method, the current elements move to the right, from the end to the insertion point. The direction of shifting is done from the end to prevent overwriting data that have not yet been shifted. If the shifting was done from the beginning of the array, then some elements would be overwritten before they were shifted.
+
+6. Point to the exact line in your `main.cpp` where a Reverse card actually changes the direction of play, and explain what would visibly break in the game if that call were missing.
+
+Answer: The line that changes the direction of play is:
+
+players->reverse();
+
+This reverses the order of the players so the turns go in the opposite direction. If I removed this line, the players would stay in the same order, so the Reverse card would not actually change anything in the game.
