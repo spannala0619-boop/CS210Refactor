@@ -61,7 +61,7 @@ public:
             return;
         }
         delete data_[position];
-        for (int i = 0; i < size_ - 1; ++i) {
+        for (int i = position; i < size_ - 1; ++i) {
             data_[i] = data_[i + 1];
         }
         data_[size_ - 1] = nullptr;
@@ -75,8 +75,27 @@ public:
             data_[left] = data_[right];
             data_[right] = temp;
             ++left;
-            ++right;
+            --right;
         }
+    }
+
+    void concat(List<T>* other) override {
+        ArrayList<T>* otherArrayList = dynamic_cast<ArrayList<T>* >(other);
+
+        if (otherArrayList == nullptr) {
+            std::cout << "ArrayList is empty." << std::endl;
+            return;
+        }
+        if (size_ + otherArrayList->size_ > CAPACITY) {
+            std::cout << "ArrayList is full." << std::endl;
+            return;
+        }
+        for (int i = 0; i < otherArrayList->size_; ++i) {
+            data_[size_ + i] = otherArrayList->data_[i];
+            otherArrayList->data_[i] = nullptr;
+        }
+        size_ += otherArrayList->size_;
+        otherArrayList->size_ = 0;
     }
 
     bool search(T* value) const override {
