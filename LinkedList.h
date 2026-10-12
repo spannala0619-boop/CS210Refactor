@@ -57,6 +57,19 @@ public:
         --size_;
     }
 
+    void reverse() override {
+        Node<T>* previous = head_;
+        Node<T>* current = head_;
+        while (current != nullptr) {
+            Node<T>* next = current->next;
+            current->next = previous;
+            previous = current;
+            current = next;
+        }
+        head_ = previous;
+
+    }
+
     void deleteFront() override {
         if (head_ == nullptr) {
             std::cout << "LinkedList is empty." << std::endl;

@@ -67,6 +67,17 @@ public:
         data_[size_ - 1] = nullptr;
         --size_;
     }
+    void reverse() override {
+        int left = 0;
+        int right = size_ - 1;
+        while (left < right) {
+            T* temp = data_[left];
+            data_[left] = data_[right];
+            data_[right] = temp;
+            ++left;
+            ++right;
+        }
+    }
 
     bool search(T* value) const override {
         for (int i = 0; i < size_; ++i) {
